@@ -14,7 +14,6 @@ This repository contains a language modeling project using PyTorch, trained on t
 - [Demo](#demo)
 - [Repository Structure](#repository-structure)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Project Overview
 
@@ -24,7 +23,7 @@ This project demonstrates the process of language modeling using PyTorch. The mo
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/your-repository.git
+    git clone https://github.com/shgyg99/LanguageModeling.git
     cd your-repository
     ```
 
@@ -41,7 +40,7 @@ This project demonstrates the process of language modeling using PyTorch. The mo
 1. **Train the model:**
     Run the script to train the language model.
     ```bash
-    python train_model.py
+    python main_train_loop.py
     ```
 
 2. **Run the Streamlit app:**
@@ -61,13 +60,13 @@ This project is deployed on Hugging Face Spaces, making it accessible online wit
 
 Click the image below to try out the application on Hugging Face Spaces:
 
-[![Hugging Face Spaces](insert-image-url-here)](insert-hugging-face-spaces-link-here)
+[![Hugging Face Spaces](https://raw.githubusercontent.com/shgyg99/LanguageModeling/main/Screenshot%202024-08-30%20171132.png)]([insert-hugging-face-spaces-link-here](https://shgyg99-languagemodeling.hf.space))
 
 ## Repository Structure
 
-- `train_model.py`: Script for training the language model.
+- `main_train_loop.py`: Script for training the language model.
 - `app.py`: Streamlit application for generating text using the trained model.
-- `model/`: Directory containing the trained model files.
+- `model.pt`: Directory containing the trained model file.
 - `requirements.txt`: List of dependencies required to run the project.
 - `.pyFiles/`: Contains additional Python files used in the project.
 
@@ -75,10 +74,6 @@ Click the image below to try out the application on Hugging Face Spaces:
 
 Contributions are welcome! Please feel free to submit a Pull Request or open an Issue if you find any bugs or have suggestions for improvements.
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
+----------------
 
 Feel free to replace the placeholders with your actual repository details and images. If you need further customization or have any specific requests, let me know!
