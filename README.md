@@ -60,7 +60,7 @@ This project is deployed on Hugging Face Spaces, making it accessible online wit
 
 Click the image below to try out the application on Hugging Face Spaces:
 
-[![Hugging Face Spaces](https://raw.githubusercontent.com/shgyg99/LanguageModeling/main/Screenshot%202024-08-30%20171132.png)]([insert-hugging-face-spaces-link-here](https://shgyg99-languagemodeling.hf.space))
+[![Hugging Face Spaces](https://raw.githubusercontent.com/shgyg99/LanguageModeling/main/Screenshot%202024-09-01%20163349.png)]([insert-hugging-face-spaces-link-here](https://shgyg99-languagemodeling.hf.space))
 
 ## Repository Structure
 
