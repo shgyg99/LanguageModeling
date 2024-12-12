@@ -1,6 +1,3 @@
-Certainly! Here’s a well-structured README template for your GitHub repository, which includes all the necessary details and placeholders where you can insert the required images and links.
-
----
 
 # Language Modeling with PyTorch and Streamlit Deployment
 
@@ -73,7 +70,3 @@ Click the image below to try out the application on Hugging Face Spaces:
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request or open an Issue if you find any bugs or have suggestions for improvements.
-
-----------------
-
-Feel free to replace the placeholders with your actual repository details and images. If you need further customization or have any specific requests, let me know!
