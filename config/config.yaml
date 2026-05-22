@@ -15,6 +15,7 @@ data:
   dataset_config: "wikitext-2-raw-v1"
 
   preprocessing:
+    tokenizer_name: "bert-base-uncased"
     seq_len: 70
 
 model:
@@ -32,7 +33,7 @@ model:
 
 training:
   num_epochs:
-  batch_size: 80
+  batch_size: 32
   weight_decay: 1.2e-6
   momentum: 0.9
   learning_rate: 30
