@@ -12,7 +12,7 @@ paths:
 
 data:
   dataset_name: "wikitext"
-  dataset_config: "wikitext-2-raw-v1"
+  dataset_config: "wikitext-103-raw-v1"
 
   preprocessing:
     tokenizer_name: "bert-base-uncased"
