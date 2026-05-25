@@ -9,7 +9,7 @@ setup(
     author="Shgyg",
     packages=find_packages(),
     install_requires=requirements,
-    )
+)
 
 
-#pip install -e .
+# pip install -e .

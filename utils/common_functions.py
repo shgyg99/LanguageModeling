@@ -1,8 +1,10 @@
 import numpy as np
 import torch
 
+
 class AverageMeter(object):
     """Computes and stores the average and current value"""
+
     def __init__(self):
         self.reset()
 
@@ -18,8 +20,9 @@ class AverageMeter(object):
         self.count += n
         self.avg = self.sum / self.count
 
+
 def set_seed(seed):
-  np.random.seed(seed)
-  torch.manual_seed(seed)
-  if torch.cuda.is_available():
-      torch.cuda.manual_seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
