@@ -1,7 +1,6 @@
 paths:
   data_raw: "./data/raw"
 
-
   models:
     saved: "./models/saved"
 
@@ -32,7 +31,7 @@ model:
 
 
 training:
-  num_epochs:
+  num_epochs: 50
   batch_size: 32
   weight_decay: 1.2e-6
   momentum: 0.9
@@ -44,6 +43,7 @@ training:
   wandb_arg_name: 'final'
 
   early_stopping:
+    patience: 5
 
 evaluation:
 
