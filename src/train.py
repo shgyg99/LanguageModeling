@@ -16,7 +16,7 @@ def train_one_epoch(model, train_loader, loss_fn, optimizer, metric, clip, devic
             inputs = inputs.t().to(device)
             targets = targets.t().to(device)
 
-            outputs, _ = model(inputs)
+            outputs = model(inputs)
 
             loss = loss_fn(outputs.reshape(-1, outputs.shape[-1]), targets.flatten())
 

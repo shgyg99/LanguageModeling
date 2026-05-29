@@ -162,7 +162,7 @@ class LanguageModel(nn.Module):
         # Output layer
         output = self.fc(emb)
 
-        return output, new_hidden
+        return output
 
     def init_hidden(self, batch_size, device):
         """Initialize hidden states"""

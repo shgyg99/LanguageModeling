@@ -35,7 +35,7 @@ training:
   batch_size: 32
   weight_decay: 1.2e-6
   momentum: 0.9
-  learning_rate: 30
+  learning_rate: 7.5
   clip: 0.25
   optimizer:
   criterion:
