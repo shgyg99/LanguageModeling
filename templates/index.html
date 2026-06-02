@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Handlee&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Auto Complete</title>
+</head>
+<body>
+    <h1 class="title">
+        <i class="fas fa-magic"></i> Auto Complete
+    </h1>
+    <div class="container">
+        <div class="container__input">
+            <input type="text" id="prompt" placeholder="Write something..." autocomplete="off">
+        </div>
+        
+        <div class="container__results" id="resultsContainer">
+            <div class="container__results-list" id="suggestionsList">
+                <div class="loading">
+                    <i class="fas fa-spinner"></i> Start typing to see suggestions...
+                </div>
+            </div>
+        </div>
+        
+        <div class="settings-panel">
+            <div class="setting-item">
+                <label>
+                    <i class="fas fa-thermometer-half"></i> Creativity (Temperature):
+                </label>
+                <input type="range" id="temperature" min="0.3" max="1.2" step="0.05" value="0.65">
+                <span id="tempValue" class="setting-value">0.65</span>
+            </div>
+            <div class="setting-item">
+                <label>
+                    <i class="fas fa-chart-line"></i> Suggestions count (Top-K):
+                </label>
+                <input type="range" id="topK" min="2" max="7" step="1" value="3">
+                <span id="topKValue" class="setting-value">3</span>
+            </div>
+        </div>
+    </div>
+
+    <script src="../static/script.js"></script>
+</body>
+</html>

@@ -1,4 +1,5 @@
 import torch
+import os
 from torch import nn, optim
 import torchmetrics as tm
 from utils.common_functions import set_seed
@@ -13,6 +14,9 @@ log_dir = config_manager.get("paths", {}).get("output", {}).get("logs", "./logs"
 train_conf = config_manager.get("training", {})
 logger = setup_logger(quiet=True, log_file=f"{log_dir}/training.log")
 
+model_save_dir = config_manager.get("paths", {}).get("models", {}).get("saved", "./models/saved")
+os.makedirs(model_save_dir, exist_ok=True)
+model_save_path = os.path.join(model_save_dir, "best_model.pt")
 
 def main():
     logger.info("=" * 50)
@@ -126,7 +130,7 @@ def main():
         # Early stopping and model saving
         if loss_valid < best_loss_valid:
             best_loss_valid = loss_valid
-            torch.save(model.state_dict(), "best_model.pt")
+            torch.save(model.state_dict(), model_save_path)
             logger.info(f"✅ New best model saved! (Loss: {loss_valid:.4f})")
             patience_counter = 0
         else:
@@ -143,7 +147,7 @@ def main():
     logger.info("=" * 50)
 
     # Load best model
-    model.load_state_dict(torch.load("best_model.pt"))
+    model.load_state_dict(torch.load(model_save_path))
     test_loss, test_metric = evaluate(model, test_loader, loss_fn, device, metric)
     logger.info(f"Test Loss: {test_loss:.4f} | Test PPL: {test_metric:.2f}")
 

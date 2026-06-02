@@ -2,3 +2,4 @@ torchmetrics
 torch
 transformers
 datasets
+flask

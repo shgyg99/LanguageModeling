@@ -2,8 +2,8 @@ venv
 old
 data
 cache
+models
 *.egg-info
 logs
-models
 results
 */__pycache__
