@@ -2,7 +2,6 @@ venv
 old
 data
 cache
-models
 *.egg-info
 logs
 results
