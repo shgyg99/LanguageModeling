@@ -2,6 +2,9 @@ venv
 old
 data
 cache
+artifacts
+models
+model_zip.py
 *.egg-info
 logs
 results
