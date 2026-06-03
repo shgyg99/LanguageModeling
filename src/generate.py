@@ -135,7 +135,8 @@ if __name__ == "__main__":
     best_model_path = f"{model_path}/best_model.pt"
 
     try:
-        model.load_state_dict(torch.load(best_model_path, map_location=device))
+        model.load_state_dict(torch.load(best_model_path, map_location=device, weights_only=False))
+
         print(f"✅ Loaded model from {best_model_path}")
     except FileNotFoundError:
         print(f"⚠️ Model not found at {best_model_path}, using random weights")
