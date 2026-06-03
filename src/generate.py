@@ -131,8 +131,8 @@ if __name__ == "__main__":
     ).to(device)
 
     # Load best model weights
-    model_path = config_manager.get("paths", {}).get("models", {}).get("saved", "./models/saved")
-    best_model_path = f"{model_path}/best_model.pt"
+    model_path = config_manager.get("paths", {}).get("models", {}).get("saved", "./artifacts")
+    best_model_path = f"{model_path}/autocomplete.pt"
 
     try:
         model.load_state_dict(torch.load(best_model_path, map_location=device, weights_only=False))

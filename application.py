@@ -5,6 +5,8 @@ from src.data_processing import WikiDataset
 from utils.config_manager import config_manager
 import os
 
+from utils.google_drive_downloader import GoogleDriveDownloader
+
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
 # Punctuation set for cleaning
@@ -88,15 +90,20 @@ model = LanguageModel(
 ).to(device)
 
 # Load best model weights
-model_path = config_manager.get("paths", {}).get("models", {}).get("saved", "./models/saved")
-best_model_path = f"{model_path}/best_model.pt"
+model_path = config_manager.get("paths", {}).get("models", {}).get("saved", "./artifacts")
+best_model_path = f"{model_path}/autocomplete.pt"
 
 try:
-    model.load_state_dict(torch.load(best_model_path, map_location=device))
+    model_file = GoogleDriveDownloader.get_model_path(best_model_path)
+
+    state_dict = torch.load(model_file, map_location=device, weights_only=False)
+    model.load_state_dict(state_dict)
     model.eval()
-    print(f"✅ Model loaded from {best_model_path}")
-except FileNotFoundError:
-    print(f"⚠️ Model not found at {best_model_path}")
+    print(f"✅ Model loaded successfully from {model_file}")
+
+except Exception as e:
+    print(f"❌ Failed to load model: {e}")
+    print("⚠️ Running without model - predictions will not work")
 
 
 def predict_next_words(text, temperature=0.65, top_k=8):

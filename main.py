@@ -14,9 +14,9 @@ log_dir = config_manager.get("paths", {}).get("output", {}).get("logs", "./logs"
 train_conf = config_manager.get("training", {})
 logger = setup_logger(quiet=True, log_file=f"{log_dir}/training.log")
 
-model_save_dir = config_manager.get("paths", {}).get("models", {}).get("saved", "./models/saved")
+model_save_dir = config_manager.get("paths", {}).get("models", {}).get("saved", "./artifacts")
 os.makedirs(model_save_dir, exist_ok=True)
-model_save_path = os.path.join(model_save_dir, "best_model.pt")
+model_save_path = os.path.join(model_save_dir, "autocomplete.pt")
 
 
 def main():
@@ -78,7 +78,7 @@ def main():
         momentum=train_conf.get("momentum", 0.9),
     )
 
-    # Learning rate scheduler (بدون verbose)
+    # Learning rate scheduler
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=2)
 
     loss_fn = nn.CrossEntropyLoss()
