@@ -8,17 +8,49 @@ import os
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
 # Punctuation set for cleaning
-PUNCTUATION = {',', '.', '!', '?', ';', ':', '"', "'", '`', 
-               '(', ')', '[', ']', '{', '}', '<', '>', '/', '\\',
-               '@', '#', '$', '%', '^', '&', '*', '-', '_', '=', '+', '~'}
+PUNCTUATION = {
+    ",",
+    ".",
+    "!",
+    "?",
+    ";",
+    ":",
+    '"',
+    "'",
+    "`",
+    "(",
+    ")",
+    "[",
+    "]",
+    "{",
+    "}",
+    "<",
+    ">",
+    "/",
+    "\\",
+    "@",
+    "#",
+    "$",
+    "%",
+    "^",
+    "&",
+    "*",
+    "-",
+    "_",
+    "=",
+    "+",
+    "~",
+}
+
 
 def clean_token(token):
     """Clean token from prefixes"""
-    if token.startswith('##'):
+    if token.startswith("##"):
         return token[2:]
-    elif token.startswith('Ġ'):
+    elif token.startswith("Ġ"):
         return token[1:]
     return token
+
 
 def is_valid_token(token):
     """Check if token is valid (not punctuation, not special)"""
@@ -27,11 +59,12 @@ def is_valid_token(token):
         return False
     if len(token_clean) == 1 and not token_clean.isalpha():
         return False
-    if token_clean in ['<unk>', '[UNK]', '[CLS]', '[SEP]', '[MASK]', '<pad>', '``', "''"]:
+    if token_clean in ["<unk>", "[UNK]", "[CLS]", "[SEP]", "[MASK]", "<pad>", "``", "''"]:
         return False
     if not token_clean:
         return False
     return True
+
 
 # Global loading (once at startup)
 device = torch.device(config_manager.get("system.device", "cuda" if torch.cuda.is_available() else "cpu"))
@@ -65,25 +98,26 @@ try:
 except FileNotFoundError:
     print(f"⚠️ Model not found at {best_model_path}")
 
+
 def predict_next_words(text, temperature=0.65, top_k=8):
     """Predict next three-word suggestions (trigrams) with cleaning. Fallback to single tokens if no trigram found."""
-    
+
     if not text or len(text.strip()) == 0:
         return []
-    
+
     input_ids = wiki.tokenizer.encode(text, add_special_tokens=False)
     if len(input_ids) == 0:
         return []
-    
+
     src = torch.LongTensor(input_ids).unsqueeze(1).to(device)
     suggestions = []
-    
+
     with torch.no_grad():
         output = model(src)
         last_logits = output[-1, 0, :] / temperature
         probs_first = torch.softmax(last_logits, dim=-1)
         top_k_vals, top_k_idxs = torch.topk(probs_first, min(top_k, vocab_size))
-        
+
         # Try to build trigrams using top-2 for second and third tokens
         for i in range(len(top_k_idxs)):
             first_id = top_k_idxs[i].item()
@@ -92,7 +126,7 @@ def predict_next_words(text, temperature=0.65, top_k=8):
             first_clean = clean_token(raw_first)
             if not is_valid_token(first_clean):
                 continue
-            
+
             # Second token: take top-2
             extended_ids = input_ids + [first_id]
             extended_src = torch.LongTensor(extended_ids).unsqueeze(1).to(device)
@@ -100,7 +134,7 @@ def predict_next_words(text, temperature=0.65, top_k=8):
             last_logits2 = output2[-1, 0, :] / temperature
             probs2 = torch.softmax(last_logits2, dim=-1)
             top2_second_vals, top2_second_idxs = torch.topk(probs2, min(2, vocab_size))
-            
+
             for j in range(top2_second_idxs.size(0)):
                 second_id = top2_second_idxs[j].item()
                 second_prob = top2_second_vals[j].item()
@@ -108,7 +142,7 @@ def predict_next_words(text, temperature=0.65, top_k=8):
                 second_clean = clean_token(raw_second)
                 if not is_valid_token(second_clean):
                     continue
-                
+
                 # Third token: take top-2
                 extended_ids2 = extended_ids + [second_id]
                 extended_src2 = torch.LongTensor(extended_ids2).unsqueeze(1).to(device)
@@ -116,7 +150,7 @@ def predict_next_words(text, temperature=0.65, top_k=8):
                 last_logits3 = output3[-1, 0, :] / temperature
                 probs3 = torch.softmax(last_logits3, dim=-1)
                 top2_third_vals, top2_third_idxs = torch.topk(probs3, min(2, vocab_size))
-                
+
                 for k in range(top2_third_idxs.size(0)):
                     third_id = top2_third_idxs[k].item()
                     third_prob = top2_third_vals[k].item()
@@ -124,24 +158,21 @@ def predict_next_words(text, temperature=0.65, top_k=8):
                     third_clean = clean_token(raw_third)
                     if not is_valid_token(third_clean):
                         continue
-                    
+
                     joint_prob = first_prob * second_prob * third_prob
                     full_phrase = f"{first_clean} {second_clean} {third_clean}"
-                    suggestions.append({
-                        'token': full_phrase,
-                        'probability': joint_prob
-                    })
+                    suggestions.append({"token": full_phrase, "probability": joint_prob})
                     if len(suggestions) >= top_k * 2:  # limit
                         break
                 if len(suggestions) >= top_k * 2:
                     break
             if len(suggestions) >= top_k * 2:
                 break
-    
+
     # Sort and keep top_k
-    suggestions.sort(key=lambda x: x['probability'], reverse=True)
+    suggestions.sort(key=lambda x: x["probability"], reverse=True)
     trigrams = suggestions[:top_k]
-    
+
     # Fallback: if no trigram found, return single valid tokens
     if not trigrams:
         for i in range(len(top_k_idxs)):
@@ -150,38 +181,38 @@ def predict_next_words(text, temperature=0.65, top_k=8):
             raw_first = wiki.tokenizer.decode([first_id])
             first_clean = clean_token(raw_first)
             if is_valid_token(first_clean):
-                trigrams.append({
-                    'token': first_clean,
-                    'probability': first_prob
-                })
+                trigrams.append({"token": first_clean, "probability": first_prob})
             if len(trigrams) >= top_k:
                 break
-        trigrams.sort(key=lambda x: x['probability'], reverse=True)
-    
+        trigrams.sort(key=lambda x: x["probability"], reverse=True)
+
     return trigrams
 
-@app.route('/')
-def home():
-    return render_template('index.html')
 
-@app.route('/predict', methods=['POST'])
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+
+@app.route("/predict", methods=["POST"])
 def predict():
     try:
         data = request.get_json()
-        prompt = data.get('prompt', '')
-        temperature = data.get('temperature', 0.65)
-        top_k = data.get('top_k', 8)
-        
+        prompt = data.get("prompt", "")
+        temperature = data.get("temperature", 0.65)
+        top_k = data.get("top_k", 8)
+
         if not prompt:
-            return jsonify({'suggestions': []})
-        
+            return jsonify({"suggestions": []})
+
         suggestions = predict_next_words(prompt, temperature, top_k)
-        
-        return jsonify({'suggestions': suggestions})
-    
+
+        return jsonify({"suggestions": suggestions})
+
     except Exception as e:
         print(f"Error: {e}")
-        return jsonify({'error': str(e), 'suggestions': []}), 500
+        return jsonify({"error": str(e), "suggestions": []}), 500
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=7860)
+
+if __name__ == "__main__":
+    app.run(debug=True, host="0.0.0.0", port=7860)
