@@ -1,3 +1,12 @@
+---
+title: Auto Complete
+emoji: ♟️
+colorFrom: green
+colorTo: red
+sdk: docker
+pinned: false
+---
+
 # AutoComplete - Language Modeling Project
 
 A comprehensive language modeling project that trains a neural network on the WikiText-103 dataset and provides an interactive web-based auto-complete application.

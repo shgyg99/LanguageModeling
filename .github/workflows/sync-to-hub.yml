@@ -1,0 +1,24 @@
+name: Sync to Hugging Face Hub
+
+on:
+  push:
+    branches: [ "main" ] 
+  workflow_dispatch:     
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true     
+
+      - name: Sync with Hugging Face
+        uses: huggingface/hub-sync@v0.1.0
+        with:
+          github_repo_id: ${{ github.repository }}
+          huggingface_repo_id: shgyg99/auto-complete 
+          hf_token: ${{ secrets.HF_TOKEN }}
+            
