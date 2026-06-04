@@ -16,18 +16,12 @@ topKSlider.addEventListener('input', () => {
     topKValue.textContent = topKSlider.value;
 });
 
-// Get last word from text
-function getLastWord(text) {
-    const words = text.trim().split(/\s+/);
-    return words[words.length - 1] || '';
-}
-
 // Fetch suggestions from backend
 async function fetchSuggestions() {
     const prompt = promptInput.value.trim();
     
     if (!prompt) {
-        suggestionsList.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> Press Space to see suggestions...</div>';
+        suggestionsList.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> Type something then press Space to see suggestions...</div>';
         return;
     }
 
@@ -79,11 +73,9 @@ function displaySuggestions(suggestions) {
         
         p.onclick = () => {
             const currentText = promptInput.value;
-            // Add a space before the suggestion if the last character is not a space
             const space = currentText.endsWith(' ') ? '' : ' ';
             const newText = currentText + space + sugg.token;
             promptInput.value = newText;
-            // Do NOT automatically fetch new suggestions – wait for user to press Space again
             suggestionsList.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> Press Space to see next suggestions...</div>';
             promptInput.focus();
         };
@@ -99,47 +91,59 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// Handle keydown: ONLY generate on Space or Enter
+// Handle input events - detect space on mobile
+let lastValue = '';
+
+promptInput.addEventListener('input', (e) => {
+    const currentValue = promptInput.value;
+    
+    // Check if a space was added (for mobile)
+    if (currentValue.length > lastValue.length && currentValue[lastValue.length] === ' ') {
+        console.log("⭐ Space detected via input event");
+        fetchSuggestions();
+    }
+    
+    lastValue = currentValue;
+});
+
+// Handle keydown for desktop browsers
 promptInput.addEventListener('keydown', (e) => {
-    // Generate suggestions on Space
-    if (e.key === ' ' || e.key === 'Space') {
-        e.preventDefault();  // prevent default space insertion? We'll handle manually to avoid double space
-        // Insert a space manually
+    // Space key detection for desktop
+    if (e.key === ' ' || e.key === 'Space' || e.code === 'Space') {
+        e.preventDefault();
+        
         const cursorPos = promptInput.selectionStart;
         const text = promptInput.value;
         const newText = text.slice(0, cursorPos) + ' ' + text.slice(cursorPos);
         promptInput.value = newText;
-        // Move cursor after the space
         promptInput.selectionStart = promptInput.selectionEnd = cursorPos + 1;
+        lastValue = newText;
         
-        // Now fetch suggestions
         fetchSuggestions();
     }
     
-    // Generate suggestions on Enter as well (optional)
+    // Enter key
     if (e.key === 'Enter') {
         e.preventDefault();
         fetchSuggestions();
     }
     
-    // Escape clears suggestions
+    // Escape key
     if (e.key === 'Escape') {
         suggestionsList.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> Suggestions cleared. Press Space to get new ones.</div>';
     }
 });
 
-// Prevent any automatic fetching on input (typing letters, backspace, etc.)
-promptInput.addEventListener('input', (e) => {
-    // Do nothing – suggestions only on Space/Enter
-    // But we can clear the "no suggestions" message if user keeps typing
-    if (suggestionsList.innerHTML.includes('Press Space') === false && 
-        suggestionsList.innerHTML.includes('cleared') === false) {
-        // Optional: keep a neutral message
-        suggestionsList.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> Press Space to get suggestions.</div>';
+// Also listen for beforeinput to catch space on some mobile browsers
+promptInput.addEventListener('beforeinput', (e) => {
+    if (e.data === ' ') {
+        setTimeout(() => {
+            fetchSuggestions();
+        }, 10);
     }
 });
 
-// Handle composition (IME) to avoid issues with non-Latin input
+// Handle composition (IME for non-Latin input)
 let composing = false;
 promptInput.addEventListener('compositionstart', () => {
     composing = true;
@@ -148,5 +152,5 @@ promptInput.addEventListener('compositionend', () => {
     composing = false;
 });
 
-// Initial load – show a friendly message instead of fetching
-suggestionsList.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> Press Space to see suggestions.</div>';
+// Initial message
+suggestionsList.innerHTML = '<div class="loading"><i class="fas fa-spinner"></i> Type something then press Space to see suggestions.</div>';
